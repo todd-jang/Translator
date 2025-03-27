@@ -149,27 +149,37 @@ const populateUserMessage = (userMessage, userRecording) => {
   scrollToBottom();
 };
 
+// Removed duplicate declaration of populateBotResponse
+
+const toggleSendButton = (isDisabled) => {
+  $("#send-button").prop("disabled", isDisabled);
+};
+
 const populateBotResponse = async (userMessage) => {
+  toggleSendButton(true); // Disable send button
   await showBotLoadingAnimation();
+
   const response = await processUserMessage(userMessage);
-  responses.push(response);
-  console.log(response)
+  if (response) {
+    responses.push(response);
 
-  const repeatButtonID = getRandomID();
-  botRepeatButtonIDToIndexMap[repeatButtonID] = responses.length - 1;
-  hideBotLoadingAnimation();
-  // Append the random message to the message list
-  $("#message-list").append(
-    `<div class='message-line'><div class='message-box${
-      !lightMode ? " dark" : ""
-    }'>${
-      response.watsonxResponseText
-    }</div><button id='${repeatButtonID}' class='btn volume repeat-button' onclick='playResponseAudio("data:audio/wav;base64," + responses[botRepeatButtonIDToIndexMap[this.id]].watsonxResponseSpeech);console.log(this.id)'><i class='fa fa-volume-up'></i></button></div>`
-  );
+    const repeatButtonID = getRandomID();
+    botRepeatButtonIDToIndexMap[repeatButtonID] = responses.length - 1;
+    hideBotLoadingAnimation();
 
-  playResponseAudio("data:audio/wav;base64," + response.watsonxResponseSpeech);
+    $("#message-list").append(
+      `<div class='message-line'><div class='message-box${
+        !lightMode ? " dark" : ""
+      }'>${
+        response.watsonxResponseText
+      }</div><button id='${repeatButtonID}' class='btn volume repeat-button' onclick='playResponseAudio("data:audio/wav;base64," + responses[botRepeatButtonIDToIndexMap[this.id]].watsonxResponseSpeech);console.log(this.id)'><i class='fa fa-volume-up'></i></button></div>`
+    );
 
-  scrollToBottom();
+    playResponseAudio("data:audio/wav;base64," + response.watsonxResponseSpeech);
+    scrollToBottom();
+  }
+
+  toggleSendButton(false); // Re-enable send button
 };
 
 $(document).ready(function () {
