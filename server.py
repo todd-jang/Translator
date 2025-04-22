@@ -31,21 +31,6 @@ def speech_to_text_route():
     return response
 
 
-@app.route('/speech-to-text', methods=['POST'])
-def speech_to_text_route():
-    print("processing Speech-to-Text")
-    audio_binary = request.data # Get the user's speech from their request
-    text = speech_to_text(audio_binary) # Call speech_to_text function to transcribe the speech
-
-    # Return the response to user in JSON format
-    response = app.response_class(
-        response=json.dumps({'text': text}),
-        status=200,
-        mimetype='application/json'
-    )
-    print(response)
-    print(response.data)
-    return response
 
 
 if __name__ == "__main__":
